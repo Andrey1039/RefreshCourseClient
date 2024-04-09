@@ -13,6 +13,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Accessibility;
 
 namespace RefreshCourseClient.Views
 {
@@ -29,7 +30,16 @@ namespace RefreshCourseClient.Views
 
         private void AuthButtonClicked(object sender, RoutedEventArgs e)
         {
-            NavigationService.Navigate(new TablePage());
+            bool successAuth = true;
+            if (successAuth)
+            {
+                MessageBox.Show("Добро пожаловать,\nПетров Петр Петрович", "Информация", MessageBoxButton.OK, MessageBoxImage.Information);
+                NavigationService.Navigate(new TablePage());
+            }
+            else
+            {
+                MessageBox.Show("Ошибка авторизации", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
     }
 }

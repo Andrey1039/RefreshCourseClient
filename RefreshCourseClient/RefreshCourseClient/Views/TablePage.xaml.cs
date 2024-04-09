@@ -27,12 +27,26 @@ namespace RefreshCourseClient.Views
 
         private void LogOutClicked(object sender, RoutedEventArgs e)
         {
-            NavigationService.Navigate(new AuthPage());
+            MessageBoxResult acceptExit = MessageBox.Show("Вы действительно хотите выйти?", "Выход", MessageBoxButton.OKCancel, MessageBoxImage.Warning);
+            if (acceptExit == MessageBoxResult.OK)
+            {
+                NavigationService.Navigate(new AuthPage());
+            }
         }
-
+        
         private void UpdateClicked(object sender, RoutedEventArgs e)
         {
             // post request to getting new data from DB
+            const int codeRequest = 400;
+            // bad request
+            if (codeRequest == 400)
+            {
+                MessageBox.Show("Текущая сессия завершена!\nПожалуйста авторизуйтесь повторно.", "Информация",
+                    MessageBoxButton.OK, MessageBoxImage.Information);
+                NavigationService.Navigate(new AuthPage());
+                return;
+            }
+
         }
         private void CreateReportClicked(object sender, RoutedEventArgs e)
         {
