@@ -11,7 +11,7 @@ namespace RefreshCourseClient.Views
         public MainWindow()
         {
             InitializeComponent();
-            MainFrame.Content = new AuthPage();
+            DataContext = new MainVM();
         }
     }
 }

@@ -10,6 +10,9 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Page Update="Resources\Dictionary1.xaml">
+      <SubType>Designer</SubType>
+    </Page>
     <Page Update="Views\AuthPage.xaml">
       <SubType>Designer</SubType>
     </Page>

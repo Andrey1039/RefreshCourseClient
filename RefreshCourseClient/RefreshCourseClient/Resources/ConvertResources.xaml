@@ -1,0 +1,9 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:convert="clr-namespace:RefreshCourseClient.Data.Converters">
+    <BooleanToVisibilityConverter x:Key="BoolToVis" />
+    <convert:InverseBoolToVisConverter x:Key="InverseBoolToVis"/>
+    <convert:InvertBoolConverter x:Key="InvertBoolConverter"/>
+    <convert:LengthConverter x:Key="LenToBool"/>
+    <convert:StringToBoolConverter x:Key="StrToBool"/>
+</ResourceDictionary>

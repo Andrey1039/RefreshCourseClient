@@ -11,11 +11,8 @@
   <ItemGroup>
     <Folder Include="Data\Services\" />
     <Folder Include="Data\Media\" />
-    <Folder Include="Data\Converters\" />
     <Folder Include="Models\" />
-    <Folder Include="Resources\" />
     <Folder Include="Models\" />
-    <Folder Include="Resources\" />
   </ItemGroup>
 
   <ItemGroup>
