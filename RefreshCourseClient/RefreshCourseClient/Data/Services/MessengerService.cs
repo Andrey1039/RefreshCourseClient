@@ -4,26 +4,26 @@ namespace RefreshCourseClient.Data.Services
 {
     internal interface IMessengerService
     {
-        static abstract void ShowErrorMessageBox(string message);
-        static abstract void ShowInfoMessageBox(string message);
-        static abstract void ShowWarningMessageBox(string title, string message);
+        static abstract MessageBoxResult ShowErrorMessageBox(string message);
+        static abstract MessageBoxResult ShowInfoMessageBox(string message);
+        static abstract MessageBoxResult ShowWarningMessageBox(string title, string message);
     }
 
     internal class MessengerService : IMessengerService
     {
-        public static void ShowErrorMessageBox(string message)
+        public static MessageBoxResult ShowErrorMessageBox(string message)
         {
-            MessageBox.Show(message, "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+            return MessageBox.Show(message, "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
         }
 
-        public static void ShowInfoMessageBox(string message)
+        public static MessageBoxResult ShowInfoMessageBox(string message)
         {
-            MessageBox.Show(message, "Информация", MessageBoxButton.OK, MessageBoxImage.Information);
+             return MessageBox.Show(message, "Информация", MessageBoxButton.OK, MessageBoxImage.Information);
         }
 
-        public static void ShowWarningMessageBox(string title, string message)
+        public static MessageBoxResult ShowWarningMessageBox(string title, string message)
         {
-            MessageBox.Show(message, title, MessageBoxButton.OKCancel, MessageBoxImage.Warning);
+            return MessageBox.Show(message, title, MessageBoxButton.OKCancel, MessageBoxImage.Warning);
         }
 
     }
