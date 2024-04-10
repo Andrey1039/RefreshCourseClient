@@ -14,12 +14,12 @@
                                               TextElement.FontWeight="Bold">
                             </ContentPresenter>
                         </Border>
-
                     </Grid>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
     </Style>
+
     <Style x:Key="LogoutButton" TargetType="{x:Type Button}" BasedOn="{StaticResource  RoundedButton}">
         <Setter Property="Template">
             <Setter.Value>
@@ -31,41 +31,9 @@
                                               TextElement.FontWeight="Bold">
                             </ContentPresenter>
                         </Border>
-
                     </Grid>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
-    </Style>
-
-    <Style x:Key="RoundedTextBox" TargetType="{x:Type TextBox}">
-        <Setter Property="HorizontalContentAlignment" Value="Left"/>
-        <Setter Property="VerticalContentAlignment" Value="Center"/>
-        <Setter Property="Padding" Value="1"/>
-        <Style.Resources>
-            <Style TargetType="{x:Type Border}">
-                <Setter Property="CornerRadius" Value="4" />
-                <Setter Property="Background" Value="#D1EEF8"></Setter>
-                <Setter Property="Opacity" Value="0.59"></Setter>
-                <Setter Property="BorderBrush" Value="Black"></Setter>
-                <Setter Property="BorderThickness" Value="1"></Setter>
-                <Setter Property="Margin" Value="5,5,0,15"></Setter>
-            </Style>
-        </Style.Resources>
-    </Style>
-    <Style x:Key="RoundedPasswordBox" TargetType="{x:Type PasswordBox}">
-        <Setter Property="HorizontalContentAlignment" Value="Left"/>
-        <Setter Property="VerticalContentAlignment" Value="Center"/>
-        <Setter Property="Padding" Value="1"/>
-        <Style.Resources>
-            <Style TargetType="{x:Type Border}">
-                <Setter Property="CornerRadius" Value="4" />
-                <Setter Property="Background" Value="#D1EEF8"></Setter>
-                <Setter Property="Opacity" Value="0.59"></Setter>
-                <Setter Property="BorderBrush" Value="Black"></Setter>
-                <Setter Property="BorderThickness" Value="1"></Setter>
-                <Setter Property="Margin" Value="5,5,0,15"></Setter>
-            </Style>
-        </Style.Resources>
     </Style>
 </ResourceDictionary>

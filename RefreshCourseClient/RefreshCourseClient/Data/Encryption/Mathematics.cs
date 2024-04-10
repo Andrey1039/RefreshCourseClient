@@ -4,6 +4,7 @@ namespace RefreshCourseClient.Data.Encryption
 {
     public class Mathematics
     {
+        // Вычисление числа по модулю
         public static BigInteger Mod(BigInteger n, BigInteger d)
         {
             BigInteger result = n % d;
@@ -14,7 +15,7 @@ namespace RefreshCourseClient.Data.Encryption
             return result;
         }
 
-
+        // Алгоритм Евклида (Обратное число по модулю)
         public static BigInteger ExtEuclidian(BigInteger a, BigInteger b)
         {
             BigInteger r = new BigInteger();

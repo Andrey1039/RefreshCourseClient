@@ -43,7 +43,7 @@ namespace RefreshCourseClient.Data.Encryption
 
         // Массив линейного преобразования
         [SecurityCritical]
-        public static readonly byte[] L_Mass  = {
+        public static readonly byte[] L_Mass = {
             0x94, 0x20, 0x85, 0x10, 0xC2, 0xC0, 0x01, 0xFB,
             0x01, 0xC0, 0xC2, 0x10, 0x85, 0x20, 0x94, 0x01
         };

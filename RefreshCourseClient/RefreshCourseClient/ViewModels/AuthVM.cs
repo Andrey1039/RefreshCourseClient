@@ -41,7 +41,7 @@ namespace RefreshCourseClient.ViewModels
         {
             get
             {
-                return loginCommand ??= new RelayCommand(_ => { MessengerService.ShowErrorMessageBox(""); });
+                return loginCommand ??= new RelayCommand(_ => {  });
             }
         }
 

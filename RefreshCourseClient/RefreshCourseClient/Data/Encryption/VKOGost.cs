@@ -18,12 +18,8 @@ namespace RefreshCourseClient.Data.Encryption
         private static readonly BigInteger yP = BigInteger.Parse(
             "4018974056539037503335449422937059775635739389905545080690979365213431566280");
 
-        // Небезопасный ГПСЧ
-        //private static Random rnd = new Random();
-        //private static byte[] xRaw = new byte[32];
-
         // Точка генератор
-        private static readonly EllipticPoint genPoint = new EllipticPoint(a, b, p, xP, yP);       
+        private static readonly EllipticPoint genPoint = new EllipticPoint(a, b, p, xP, yP);
 
         // Соединение координат точек на эллиптической кривой
         private static byte[] ConcatCoords(EllipticPoint yP)
@@ -64,11 +60,9 @@ namespace RefreshCourseClient.Data.Encryption
             return (privKey.ToString(), pubKey.ToString());
         }
 
-        // Версия на 256 бит
+        // Версия алгоритма согласования ключей на 256 бит
         private static byte[] VKO_GOSTR3410_2012_256(EllipticPoint yP, BigInteger m, BigInteger q, BigInteger x)
         {
-            //byte[] sumPoint = ConcatCoords(yP);
-
             BigInteger UKM = BigInteger.Parse("5398423985475523801");
             EllipticPoint kPoint = Mathematics.Mod((Mathematics.ExtEuclidian(m, q) * UKM * x), q) * yP;
             byte[] sumPoint = ConcatCoords(kPoint);

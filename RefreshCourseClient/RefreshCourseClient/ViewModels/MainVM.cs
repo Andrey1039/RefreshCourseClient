@@ -1,33 +1,39 @@
-﻿using RefreshCourseClient.Views;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Runtime.CompilerServices;
+﻿using System.Net;
 using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Navigation;
 using System.Windows;
 using Newtonsoft.Json;
-using RefreshCourseClient.Data.Encryption;
-using RefreshCourseClient.Data.Services;
 using System.Net.Http;
-using System.Net;
-using Newtonsoft.Json.Linq;
-using System.Data;
+using System.ComponentModel;
+using System.Security.Claims;
+using System.Windows.Controls;
 using RefreshCourseClient.Models;
+using System.Collections.ObjectModel;
+using System.Runtime.CompilerServices;
+using RefreshCourseClient.Data.Services;
+using RefreshCourseClient.Data.Encryption;
+using System.IdentityModel.Tokens.Jwt;
 
 namespace RefreshCourseClient.ViewModels
 {
     internal class MainVM : INotifyPropertyChanged
     {
-        private bool _currentGridVisibility;
+        private string _token;
         private string _serverUrl;
         private string _userEmail;
-        private string _userPassword;
-        private string _token;
         private string _privateKey;
-        private DataTable? _dataTable;
+        private bool _currentGridVisibility;
+        private ObservableCollection<RecordModel> _records;
+
+        public MainVM()
+        {
+            _token = string.Empty;
+            _userEmail = "smv@psu.ru";
+            _privateKey = string.Empty;
+            _currentGridVisibility = true;
+            _serverUrl = "https://localhost:44359";
+            _records = new ObservableCollection<RecordModel>();
+        }
+
         public bool CurrentGridVisibility
         {
             get => _currentGridVisibility;
@@ -47,32 +53,19 @@ namespace RefreshCourseClient.ViewModels
                 OnPropertyChanged("ServerUrl");
             }
         }
+
         public string Email
         {
             get => _userEmail;
             set => _userEmail = value;
         }
-        public string Password
-        {
-            get => _userPassword;
-            set => _userPassword = value;
-        }
 
-        public DataTable? DataTable
+        public ObservableCollection<RecordModel> Records
         {
-            get => _dataTable;
-            set => _dataTable = value;
-        }
-
-        public MainVM()
-        {
-            _currentGridVisibility = true;
-            _serverUrl = "https://localhost:44359";
-            _userEmail = "smv@psu.ru";
-            _userPassword = "User1!smv";
-            //_userPassword = new NetworkCredential("", "User1!smv").SecurePassword;
-            _token = string.Empty;
-            _dataTable = null; //new DataTable();
+            get
+            {
+                return _records;
+            }
         }
 
         private RelayCommand? _loginCommand;
@@ -80,10 +73,10 @@ namespace RefreshCourseClient.ViewModels
         {
             get
             {
-                return _loginCommand ??= new RelayCommand(_ =>
+                return _loginCommand ??= new RelayCommand(passwordTB =>
                 {
-                    // Этап №1 (обмен ключами)
-                    // Генерация пары ключей
+                    // Обмен публичными ключами
+                    var password = ((PasswordBox)passwordTB).Password;
                     (string privateKeyClient, string publicKeyClient) = VKOGost.GetKeyPair();
 
                     string jsonData = JsonConvert.SerializeObject(new
@@ -92,58 +85,59 @@ namespace RefreshCourseClient.ViewModels
                         PublicKey = publicKeyClient
                     });
 
-                    // Запрос на сервер и ответ (публичный ключ сервера)
                     string serverPublicKey = SendPostRequest(jsonData, $"{_serverUrl}/api/Auth/SwapKeys");
 
-                    if (serverPublicKey == string.Empty)
-                        return;
 
-                    // Получаем общий приватный ключ
-                    _privateKey = VKOGost.GetHash(privateKeyClient, serverPublicKey);
-
-                    // Этап №2 (авторизация)
-                    jsonData = JsonConvert.SerializeObject(new
+                    // Авторизация и получение токена
+                    if (serverPublicKey != string.Empty)
                     {
-                        Email = _userEmail,
-                        Password = CipherEngine.EncryptString(_userPassword, _privateKey)
-                    });
+                        _privateKey = VKOGost.GetHash(privateKeyClient, serverPublicKey);
 
-                    // Запрос на сервер и ответ (токен для доступа)
-                    _token = SendPostRequest(jsonData, $"{_serverUrl}/api/Auth/Login");
+                        jsonData = JsonConvert.SerializeObject(new
+                        {
+                            Email = _userEmail,
+                            Password = CipherEngine.EncryptString(password.ToString(), _privateKey)
+                        });
 
-                    if (_token != string.Empty)
-                    {
-                        MessengerService.ShowInfoMessageBox("Добро пожаловать,\nПетров Петр Петрович");
-                        CurrentGridVisibility = false;
-                        this.DataTable = UpdateWorkLoad();
-                        //TODO: clean user email and password
+                        _token = SendPostRequest(jsonData, $"{_serverUrl}/api/Auth/Login");
 
+                        if (_token != string.Empty)
+                        {
+                            var handler = new JwtSecurityTokenHandler();
+                            var jsonToken = handler.ReadToken(_token) as JwtSecurityToken;
+
+                            var username = jsonToken.Claims.First(claim => claim.Type == ClaimTypes.Email).Value;
+
+                            MessengerService.ShowInfoMessageBox("Вход", $"Добро пожаловать,\n{username}");
+                            CurrentGridVisibility = false;
+
+                            UpdateWorkLoad();
+                        }
+                        else
+                        {
+                            _privateKey = string.Empty;
+                            _token = string.Empty;
+
+                            MessengerService.ShowErrorMessageBox("Ошибка", "Ошибка авторизации");
+                        }
                     }
                     else
-                    {
-                        _privateKey = string.Empty;
-                        _token = string.Empty;
-                        this.DataTable = null;
-                        MessengerService.ShowInfoMessageBox("Ошибка авторизации");
-                    }
+                        MessengerService.ShowErrorMessageBox("Ошибка", "Ошибка авторизации");
                 });
             }
         }
 
+        // Обновление данных о нагрузке
         private RelayCommand? _updateCommand;
-
         public RelayCommand UpdateCommand
         {
             get
             {
-                return _updateCommand ??= new RelayCommand(_ =>
-                {
-                    this.DataTable = UpdateWorkLoad();
-                });
+                return _updateCommand ??= new RelayCommand(_ => UpdateWorkLoad());
             }
         }
 
-
+        // Выход из учетной записи
         private RelayCommand? _logoutCommand;
         public RelayCommand LogoutCommand
         {
@@ -151,40 +145,45 @@ namespace RefreshCourseClient.ViewModels
             {
                 return _logoutCommand ??= new RelayCommand(_ =>
                 {
-                    MessageBoxResult acceptExit = MessengerService.ShowWarningMessageBox("Выход", "Вы действительно хотите выйти?");
+                    MessageBoxResult acceptExit = MessengerService
+                        .ShowWarningMessageBox("Выход", "Вы действительно хотите выйти?");
+
                     if (acceptExit == MessageBoxResult.OK)
                     {
-                        // Выход из системы
                         string responseData = SendPostRequest(string.Empty, $"{_serverUrl}/api/Auth/Logout");
                         
                         _token = string.Empty;
                         _privateKey = string.Empty;
+
                         CurrentGridVisibility = true;
                     }
                 });
             }
         }
 
-
-
-        private DataTable? UpdateWorkLoad()
+        // Получение текущих данных о нагрузке
+        private void UpdateWorkLoad()
         {
-            string data = string.Empty;
-
-            // Получение информации о нагрузке и т.д.
             string responseData = SendGetRequest($"{_serverUrl}/api/Home/GetWorkLoad");
 
-            if (responseData == string.Empty)
-                return null;
+            if (responseData != string.Empty)
+            {
+                try
+                {
+                    string data = CipherEngine.DecryptString(responseData, _privateKey);
+                    _records.Clear();
 
-            // Расшифровка и вывод полученных данных
-            data = CipherEngine.DecryptString(responseData, _privateKey);
-            RecordModel[] records = JsonConvert.DeserializeObject<RecordModel[]>(data)!;
-
-            // Преобразование JSON to DataTable
-            return (DataTable)JsonConvert.DeserializeObject(data, (typeof(DataTable)))!;
+                    foreach (var record in JsonConvert.DeserializeObject<RecordModel[]>(data)!)
+                        _records.Add(record);
+                }
+                catch
+                {
+                    MessengerService.ShowErrorMessageBox("Ошибка", "Ошибка при получении данных с сервера");
+                }             
+            }
         }
 
+        // Отправка Post запроса на сервер
         private string SendPostRequest(string jsonData, string api)
         {
             StringContent httpContent = new StringContent(jsonData, Encoding.UTF8, "application/json");
@@ -195,6 +194,7 @@ namespace RefreshCourseClient.ViewModels
             {
                 var httpClient = new HttpClient();
                 httpClient.DefaultRequestHeaders.Add("Authorization", "Bearer " + _token);
+
                 HttpResponseMessage response = httpClient.PostAsync(api, httpContent).Result;
 
                 if (response.StatusCode == HttpStatusCode.OK)
@@ -210,6 +210,7 @@ namespace RefreshCourseClient.ViewModels
             return responseResult;
         }
 
+        // Отправка Get запроса на сервер
         private string SendGetRequest(string api)
         {
             string responseResult = string.Empty;
@@ -218,6 +219,7 @@ namespace RefreshCourseClient.ViewModels
             {
                 var httpClient = new HttpClient();
                 httpClient.DefaultRequestHeaders.Add("Authorization", "Bearer " + _token);
+
                 HttpResponseMessage response = httpClient.GetAsync(api).Result;
 
                 if (response.StatusCode == HttpStatusCode.OK)

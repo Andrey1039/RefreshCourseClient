@@ -9,138 +9,98 @@
         mc:Ignorable="d"
         d:DataContext="{d:DesignInstance Type=viewmodels:MainVM}"
         Title="MainWindow" Height="450" Width="800"
-        MinWidth="650" MinHeight="400">
+        MinWidth="650" MinHeight="400" WindowStartupLocation="CenterScreen">
     <Window.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="../Resources/Dictionary1.xaml" />
-                <ResourceDictionary Source="../Resources/ConvertResources.xaml" />
+                <ResourceDictionary Source="../Resources/ButtonsResources.xaml"/>
+                <ResourceDictionary Source="../Resources/ConvertResources.xaml"/>
+                <ResourceDictionary Source="../Resources/PasswordboxResources.xaml"/>
+                <ResourceDictionary Source="../Resources/TextboxResources.xaml"/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
-
     </Window.Resources>
-
 
     <Grid Background="#ECD4C9">
         <Grid Visibility="{Binding CurrentGridVisibility, Converter={StaticResource BoolToVis}, FallbackValue=Visible}">
-            <StackPanel Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center" >
-            <TextBlock 
-            Text="Авторизация" FontSize="28" FontStretch="Expanded"
-            HorizontalAlignment="Center" Margin="0 10 0 15">
-            </TextBlock>
-            <Grid MinWidth="200" HorizontalAlignment="Center" Margin=" 50 0" >
-                <Grid.Resources>
-                    <Style TargetType="{x:Type TextBlock}">
-                        <Setter Property="Margin" Value="0,5,10,15" />
-                        <Setter Property="FontSize" Value="14"></Setter>
-                    </Style>
-                </Grid.Resources>
 
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto" MinHeight="50"></RowDefinition>
-                    <RowDefinition Height="Auto" MinHeight="50"></RowDefinition>
-                    <RowDefinition Height="Auto" MinHeight="50"></RowDefinition>
-                    <RowDefinition Height="Auto" MinHeight="25"></RowDefinition>
-                </Grid.RowDefinitions>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="1*" MinWidth="60"></ColumnDefinition>
-                    <ColumnDefinition Width="1*" MinWidth="200" MaxWidth="300"></ColumnDefinition>
-                </Grid.ColumnDefinitions>
+            <StackPanel Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center">
 
-                <TextBlock 
-                Grid.Row="0" Grid.Column="0"
-                HorizontalAlignment="Right" VerticalAlignment="Center" 
-                Text="Сервер">
-                </TextBlock>
-                <TextBlock 
-                Grid.Row="1" Grid.Column="0" 
-                HorizontalAlignment="Right" VerticalAlignment="Center" 
-                Text="Логин">
-                </TextBlock>
-                <TextBlock 
-                Grid.Row="2" Grid.Column="0"
-                HorizontalAlignment="Right" VerticalAlignment="Center" 
-                Text="Пароль">
-                </TextBlock>
+                <TextBlock Text="Авторизация" FontSize="28" FontStretch="Expanded" 
+                       HorizontalAlignment="Center" Margin="0 10 0 15"/>
 
-                <TextBox 
-                Style="{DynamicResource RoundedTextBox}"
-                Grid.Row="0" Grid.Column="1" Text="{Binding ServerUrl}">
-                </TextBox>
-                <TextBox 
-                Style="{DynamicResource RoundedTextBox}"
-                Grid.Row="1" Grid.Column="1" Text="{Binding Email}">
-                </TextBox>
-                <TextBox
-                Style="{DynamicResource RoundedTextBox}"
-                Grid.Row="2" Grid.Column="1" Text ="{Binding Password}">
-                </TextBox>
+                <Grid MinWidth="200" HorizontalAlignment="Center" Margin="50 0">
 
-                <CheckBox
-                Grid.Row="3" Grid.Column="1"
-                HorizontalAlignment="Left" VerticalAlignment="Top" 
-                Margin="10 -5 0 0" 
-                FontSize="13"
-                Content="Показывать пароль"
-                Background="Transparent">
-                </CheckBox>
-            </Grid>
-            <Button 
-            x:Name="AuthButton" Style="{DynamicResource RoundedButton}" Content="Войти"
-            MinWidth="100" MaxWidth="160"
-            MinHeight="40"
-            Margin=" 0 10 0 0"
-            FontSize="14" Command="{Binding LoginCommand}">
-            </Button>
-        </StackPanel>
+                    <Grid.Resources>
+                        <Style TargetType="{x:Type TextBlock}">
+                            <Setter Property="Margin" Value="0,5,10,15" />
+                            <Setter Property="FontSize" Value="14"></Setter>
+                        </Style>
+                    </Grid.Resources>
+
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" MinHeight="50"></RowDefinition>
+                        <RowDefinition Height="Auto" MinHeight="50"></RowDefinition>
+                        <RowDefinition Height="Auto" MinHeight="50"></RowDefinition>
+                        <RowDefinition Height="Auto" MinHeight="25"></RowDefinition>
+                    </Grid.RowDefinitions>
+
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="1*" MinWidth="60"></ColumnDefinition>
+                        <ColumnDefinition Width="1*" MinWidth="200" MaxWidth="300"></ColumnDefinition>
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock Grid.Row="0" Grid.Column="0" Text="Сервер"
+                           HorizontalAlignment="Right" VerticalAlignment="Center"/>
+
+                    <TextBlock Grid.Row="1" Grid.Column="0" Text="Логин"
+                           HorizontalAlignment="Right" VerticalAlignment="Center"/>
+
+                    <TextBlock Grid.Row="2" Grid.Column="0" Text="Пароль"
+                           HorizontalAlignment="Right" VerticalAlignment="Center"/>
+
+                    <TextBox Style="{DynamicResource RoundedTextBox}" Grid.Row="0" Grid.Column="1" Text="{Binding ServerUrl}"/>
+                    <TextBox Style="{DynamicResource RoundedTextBox}" Grid.Row="1" Grid.Column="1" Text="{Binding Email}"/>
+                    <PasswordBox x:Name="PasswordTB" Template="{StaticResource RoundedPasswordBox}" 
+                           Grid.Row="2" Grid.Column="1" VerticalContentAlignment="Center" Password="" Foreground="Black"/>
+
+                    <CheckBox Grid.Row="3" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Top" 
+                            Margin="10 -5 0 0" FontSize="13" Content="Показывать пароль" Background="Transparent"/>
+                </Grid>
+
+                <Button x:Name="AuthButton" Style="{DynamicResource RoundedButton}" Content="Войти"
+                        MinWidth="100" MaxWidth="160" MinHeight="40" Margin="0 10 0 0" FontSize="14"
+                        Command="{Binding LoginCommand}" CommandParameter="{Binding ElementName=PasswordTB}"/>
+
+            </StackPanel>
         </Grid>
-        <Grid Background="#ECD4C9" HorizontalAlignment="Stretch" 
-              Margin="0,0,0,0" Width="NaN" 
+
+        <Grid Background="#ECD4C9" HorizontalAlignment="Stretch" Margin="0,0,0,0" Width="NaN" 
               Visibility="{Binding CurrentGridVisibility, Converter={StaticResource InverseBoolToVis}, FallbackValue=Hidden}">
+
             <Grid.RowDefinitions>
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="Auto" MinHeight="80"/>
             </Grid.RowDefinitions>
 
-
-            <DataGrid Grid.Row="0" Background="#D1EEF8" Opacity="0.59"
-                      Margin="20,20,20,0"
-                      ItemsSource="{Binding DataTable}"
-                      AutoGenerateColumns="True">
-                <!--<DataGridColumnHeader Background="#ECD4C9" Opacity="0.63">
+            <DataGrid Grid.Row="0" Opacity="0.59" Margin="20,20,20,0" ItemsSource="{Binding Records}"
+                      AutoGenerateColumns="True"/>
+            <!--<DataGridColumnHeader Background="#ECD4C9" Opacity="0.63">
                 </DataGridColumnHeader>-->
-            </DataGrid>
 
-            <StackPanel 
-                Grid.Row="1" Orientation="Horizontal"
-                HorizontalAlignment="Center" VerticalAlignment="Center"
-                CanHorizontallyScroll="False" CanVerticallyScroll="False">
+            <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center"
+                        VerticalAlignment="Center" CanHorizontallyScroll="False" CanVerticallyScroll="False">
 
-                <Button
-                    Style="{DynamicResource RoundedButton}"
-                    x:Name="UpdateButton" Content="Обновить" 
-                    Command="{Binding UpdateCommand}" MinWidth="160"
-                    MaxWidth="200" Height="40">
-                </Button>
+                <Button Style="{DynamicResource RoundedButton}" Content="Обновить"
+                        Command="{Binding UpdateCommand}" MinWidth="160" MaxWidth="200" Height="40"/>
 
-                <Button 
-                    Style="{DynamicResource RoundedButton}"
-                    x:Name="ReportButton" Content="Сформировать отчет" 
-                     MinHeight="40" MinWidth="160"
-                    MaxWidth="200" Height="40" 
-                    Margin="40 0 40 0">
-                </Button>
+                <Button Style="{DynamicResource RoundedButton}" Content="Сформировать отчет" MinHeight="40"
+                        MinWidth="160" MaxWidth="200" Height="40" Margin="40 0 40 0"/>
 
-                <Button 
-                    Style="{DynamicResource LogoutButton}"
-                    x:Name="LogOutButton" Content="Выйти" 
-                    Command="{Binding LogoutCommand}" MinHeight="40" MinWidth="160"
-                    MaxWidth="200" Height="40">
-                </Button>
+                <Button Style="{DynamicResource LogoutButton}" Content="Выйти" MaxWidth="200" Height="40"
+                        Command="{Binding LogoutCommand}" MinHeight="40" MinWidth="160"/>
+
             </StackPanel>
         </Grid>
     </Grid>
-    
-
-
 </Window>

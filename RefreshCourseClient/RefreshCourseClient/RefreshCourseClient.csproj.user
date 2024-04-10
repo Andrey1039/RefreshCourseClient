@@ -10,7 +10,13 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Page Update="Resources\Dictionary1.xaml">
+    <Page Update="Resources\ButtonsResources.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Resources\PasswordboxResources.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Resources\TextboxResources.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Update="Views\AuthPage.xaml">

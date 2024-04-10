@@ -1,7 +1,6 @@
-﻿using System.Text;
+﻿using System.IO;
+using System.Text;
 using System.Security.Cryptography;
-using System.Globalization;
-using System.IO;
 
 namespace RefreshCourseClient.Data.Encryption
 {
