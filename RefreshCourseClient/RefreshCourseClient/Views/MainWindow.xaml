@@ -84,7 +84,7 @@
             </Grid.RowDefinitions>
 
             <DataGrid Grid.Row="0" Opacity="0.59" Margin="20,20,20,0" ItemsSource="{Binding Records}"
-                      AutoGenerateColumns="True"/>
+                      AutoGenerateColumns="True" CanUserResizeColumns="False" CanUserReorderColumns="False"/>
             <!--<DataGridColumnHeader Background="#ECD4C9" Opacity="0.63">
                 </DataGridColumnHeader>-->
 
