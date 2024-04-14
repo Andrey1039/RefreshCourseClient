@@ -8,7 +8,7 @@
         xmlns:local="clr-namespace:RefreshCourseClient"
         mc:Ignorable="d"
         d:DataContext="{d:DesignInstance Type=viewmodels:MainVM}"
-        Title="MainWindow" Height="450" Width="800"
+        Title="Образование+" Height="450" Width="800"
         MinWidth="650" MinHeight="400" WindowStartupLocation="CenterScreen">
     <Window.Resources>
         <ResourceDictionary>
@@ -17,11 +17,19 @@
                 <ResourceDictionary Source="../Resources/ConvertResources.xaml"/>
                 <ResourceDictionary Source="../Resources/PasswordboxResources.xaml"/>
                 <ResourceDictionary Source="../Resources/TextboxResources.xaml"/>
+                <ResourceDictionary Source="../Resources/ProgressbarResources.xaml"/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Window.Resources>
 
+    <interactive:Interaction.Triggers>
+        <interactive:EventTrigger EventName="Closing">
+            <interactive:InvokeCommandAction Command="{Binding ClosingCommand}"/>
+        </interactive:EventTrigger>
+    </interactive:Interaction.Triggers>
+
     <Grid Background="#ECD4C9">
+
         <Grid Visibility="{Binding CurrentGridVisibility, Converter={StaticResource BoolToVis}, FallbackValue=Visible}">
 
             <StackPanel Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center">
@@ -63,13 +71,9 @@
                     <TextBox Style="{DynamicResource RoundedTextBox}" Grid.Row="1" Grid.Column="1" Text="{Binding Email}"/>
                     <PasswordBox x:Name="PasswordTB" Template="{StaticResource RoundedPasswordBox}" 
                            Grid.Row="2" Grid.Column="1" VerticalContentAlignment="Center" Password="" Foreground="Black"/>
-
-                    <CheckBox Grid.Row="3" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Top" 
-                            Margin="10 -5 0 0" FontSize="13" Content="Показывать пароль" Background="Transparent"/>
                 </Grid>
-
-                <Button x:Name="AuthButton" Style="{DynamicResource RoundedButton}" Content="Войти"
-                        MinWidth="100" MaxWidth="160" MinHeight="40" Margin="0 10 0 0" FontSize="14"
+                <Button x:Name="AuthButton" Style="{DynamicResource RoundedButton}" Content="Войти" Background="#2FBDEA"
+                        MinWidth="100" MaxWidth="160" MinHeight="40" FontSize="14"
                         Command="{Binding LoginCommand}" CommandParameter="{Binding ElementName=PasswordTB}"/>
 
             </StackPanel>
@@ -83,24 +87,40 @@
                 <RowDefinition Height="Auto" MinHeight="80"/>
             </Grid.RowDefinitions>
 
-            <DataGrid Grid.Row="0" Opacity="0.59" Margin="20,20,20,0" ItemsSource="{Binding Records}"
-                      AutoGenerateColumns="True" CanUserResizeColumns="False" CanUserReorderColumns="False"/>
+            <DataGrid Grid.Row="0" Opacity="0.59" Margin="20,20,20,0" ItemsSource="{Binding Records}" x:Name="DataGrid"
+                      AutoGenerateColumns="True" CanUserResizeColumns="False" CanUserReorderColumns="False" CanUserAddRows="False"
+                      CanUserResizeRows="False" IsReadOnly="True"/>
             <!--<DataGridColumnHeader Background="#ECD4C9" Opacity="0.63">
                 </DataGridColumnHeader>-->
 
             <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center"
                         VerticalAlignment="Center" CanHorizontallyScroll="False" CanVerticallyScroll="False">
 
-                <Button Style="{DynamicResource RoundedButton}" Content="Обновить"
+                <Button Style="{DynamicResource RoundedButton}" Content="Обновить" Background="#2FBDEA"
                         Command="{Binding UpdateCommand}" MinWidth="160" MaxWidth="200" Height="40"/>
 
                 <Button Style="{DynamicResource RoundedButton}" Content="Сформировать отчет" MinHeight="40"
-                        MinWidth="160" MaxWidth="200" Height="40" Margin="40 0 40 0"/>
+                        MinWidth="160" MaxWidth="200" Height="40" Margin="40 0 40 0" Background="#2FBDEA"
+                        Command="{Binding GetReportCommand}" CommandParameter="{Binding ElementName=DataGrid, Path=ItemsSource}"/>
 
-                <Button Style="{DynamicResource LogoutButton}" Content="Выйти" MaxWidth="200" Height="40"
-                        Command="{Binding LogoutCommand}" MinHeight="40" MinWidth="160"/>
+                <Button Style="{DynamicResource RoundedButton}" Content="Выйти" MaxWidth="200" Height="40"
+                        Command="{Binding LogoutCommand}" MinHeight="40" MinWidth="160" Background="#B23333"/>
 
             </StackPanel>
         </Grid>
+
+        <Grid Visibility="{Binding ProgressBar, Converter={StaticResource BoolToVis}, FallbackValue=Hidden}"
+              Background="#ECD4C9">
+            
+            <Grid HorizontalAlignment="Center" VerticalAlignment="Center" Width="335">
+
+                <ProgressBar Style="{DynamicResource ProgressBarStyle}" IsIndeterminate="{Binding ProgressBar}" HorizontalAlignment="Center"
+                             Width="284" Height="32" VerticalAlignment="Center" />
+                
+                <TextBlock Text="{Binding ProgressText}" HorizontalAlignment="Center" VerticalAlignment="Top"
+                           Width="284" Margin="0,92,0,0" Height="28" TextAlignment="Center"/>
+            </Grid>
+        </Grid>
+
     </Grid>
 </Window>
