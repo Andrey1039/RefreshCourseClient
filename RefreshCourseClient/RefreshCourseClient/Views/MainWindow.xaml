@@ -105,16 +105,17 @@
 
             <DataGrid Grid.Row="0" Opacity="0.59" Margin="20,20,20,0" ItemsSource="{Binding Records}" x:Name="DataGrid"
                       AutoGenerateColumns="False" CanUserResizeColumns="False" CanUserReorderColumns="False" CanUserAddRows="False"
-                      CanUserResizeRows="False" IsReadOnly="True" 
+                      CanUserResizeRows="False" IsReadOnly="True" HorizontalAlignment="Stretch" HorizontalScrollBarVisibility="Hidden"
+                      HeadersVisibility="Column"
                       ColumnHeaderStyle="{StaticResource HeaderCellStyle}" CellStyle="{StaticResource TextCellStyle}">
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="№" Binding="{Binding Id}"></DataGridTextColumn>
-                    <DataGridTextColumn Header="Группа" Binding="{Binding GroupName}"></DataGridTextColumn>
-                    <DataGridTextColumn Header="Предмет" Binding="{Binding SubjectName}"></DataGridTextColumn>
-                    <DataGridTextColumn Header="Тип Занятия" Binding="{Binding LessonType}"></DataGridTextColumn>
-                    <DataGridTextColumn Header="Кол-во часов"  Binding="{Binding HoursCount}"></DataGridTextColumn>
-                    <DataGridTextColumn Header="Оплата за час" Binding="{Binding PayHour}"></DataGridTextColumn>
-                    <DataGridTextColumn Header="Сумма" Binding="{Binding Money}"></DataGridTextColumn>
+                    <DataGridTextColumn Width="1*" Header="№" Binding="{Binding Id}"></DataGridTextColumn>
+                    <DataGridTextColumn Width="2.4*" Header="Группа" Binding="{Binding GroupName}"></DataGridTextColumn>
+                    <DataGridTextColumn Width="4.8*" Header="Предмет" Binding="{Binding SubjectName}"></DataGridTextColumn>
+                    <DataGridTextColumn Width="2.9*" Header="Тип Занятия" Binding="{Binding LessonType}"></DataGridTextColumn>
+                    <DataGridTextColumn Width="2.8*" Header="Кол-во часов"  Binding="{Binding HoursCount}"></DataGridTextColumn>
+                    <DataGridTextColumn Width="2.9*" Header="Оплата за час" Binding="{Binding PayHour}"></DataGridTextColumn>
+                    <DataGridTextColumn Width="1.7*" Header="Сумма" Binding="{Binding Money}"></DataGridTextColumn>
                 </DataGrid.Columns>
             </DataGrid>
             <!--<DataGridColumnHeader Background="#ECD4C9" Opacity="0.63">
