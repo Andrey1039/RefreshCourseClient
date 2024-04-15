@@ -83,10 +83,25 @@
                     <TextBlock Grid.Row="2" Grid.Column="0" Text="Пароль"
                            HorizontalAlignment="Right" VerticalAlignment="Center"/>
 
-                    <TextBox Style="{DynamicResource RoundedTextBox}" Grid.Row="0" Grid.Column="1" Text="{Binding ServerUrl}"/>
-                    <TextBox Style="{DynamicResource RoundedTextBox}" Grid.Row="1" Grid.Column="1" Text="{Binding Email}"/>
+                    <TextBox Style="{DynamicResource RoundedTextBox}" Grid.Row="0" Grid.Column="1" Text="{Binding ServerUrl}">
+                        <TextBox.InputBindings>
+                            <KeyBinding Gesture="Enter" Command="{Binding LoginCommand}"
+                                        CommandParameter="{Binding ElementName=PasswordTB}" Key="Return"></KeyBinding>
+                        </TextBox.InputBindings>
+                    </TextBox>
+                    <TextBox Style="{DynamicResource RoundedTextBox}" Grid.Row="1" Grid.Column="1" Text="{Binding Email}">
+                        <TextBox.InputBindings>
+                            <KeyBinding Gesture="Enter" Command="{Binding LoginCommand}"
+                                        CommandParameter="{Binding ElementName=PasswordTB}" Key="Return"></KeyBinding>
+                        </TextBox.InputBindings>
+                    </TextBox>
                     <PasswordBox x:Name="PasswordTB" Template="{StaticResource RoundedPasswordBox}" 
-                           Grid.Row="2" Grid.Column="1" VerticalContentAlignment="Center" Password="" Foreground="Black"/>
+                           Grid.Row="2" Grid.Column="1" VerticalContentAlignment="Center" Password="" Foreground="Black">
+                        <PasswordBox.InputBindings>
+                            <KeyBinding Gesture="Enter" Command="{Binding LoginCommand}"
+                                        CommandParameter="{Binding ElementName=PasswordTB}" Key="Return"></KeyBinding>
+                        </PasswordBox.InputBindings>
+                    </PasswordBox>
                 </Grid>
                 <Button x:Name="AuthButton" Style="{DynamicResource RoundedButton}" Content="Войти" Background="#2FBDEA"
                         MinWidth="100" MaxWidth="160" MinHeight="40" FontSize="14"
