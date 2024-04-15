@@ -19,7 +19,23 @@
                 <ResourceDictionary Source="../Resources/TextboxResources.xaml"/>
                 <ResourceDictionary Source="../Resources/ProgressbarResources.xaml"/>
             </ResourceDictionary.MergedDictionaries>
+            <Style x:Key="TextCellStyle" TargetType="DataGridCell">
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="{x:Type DataGridCell}">
+                            <Grid Background="{TemplateBinding Background}" SnapsToDevicePixels="True">
+                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
+                            </Grid>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+            <Style x:Key="HeaderCellStyle" TargetType="{x:Type DataGridColumnHeader}">
+                <Setter Property="HorizontalContentAlignment" Value="Center"></Setter>
+                <Setter Property="FontWeight" Value="Bold"></Setter>
+            </Style>
         </ResourceDictionary>
+
     </Window.Resources>
 
     <interactive:Interaction.Triggers>
@@ -88,8 +104,19 @@
             </Grid.RowDefinitions>
 
             <DataGrid Grid.Row="0" Opacity="0.59" Margin="20,20,20,0" ItemsSource="{Binding Records}" x:Name="DataGrid"
-                      AutoGenerateColumns="True" CanUserResizeColumns="False" CanUserReorderColumns="False" CanUserAddRows="False"
-                      CanUserResizeRows="False" IsReadOnly="True"/>
+                      AutoGenerateColumns="False" CanUserResizeColumns="False" CanUserReorderColumns="False" CanUserAddRows="False"
+                      CanUserResizeRows="False" IsReadOnly="True" 
+                      ColumnHeaderStyle="{StaticResource HeaderCellStyle}" CellStyle="{StaticResource TextCellStyle}">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="№" Binding="{Binding Id}"></DataGridTextColumn>
+                    <DataGridTextColumn Header="Группа" Binding="{Binding GroupName}"></DataGridTextColumn>
+                    <DataGridTextColumn Header="Предмет" Binding="{Binding SubjectName}"></DataGridTextColumn>
+                    <DataGridTextColumn Header="Тип Занятия" Binding="{Binding LessonType}"></DataGridTextColumn>
+                    <DataGridTextColumn Header="Кол-во часов"  Binding="{Binding HoursCount}"></DataGridTextColumn>
+                    <DataGridTextColumn Header="Оплата за час" Binding="{Binding PayHour}"></DataGridTextColumn>
+                    <DataGridTextColumn Header="Сумма" Binding="{Binding Money}"></DataGridTextColumn>
+                </DataGrid.Columns>
+            </DataGrid>
             <!--<DataGridColumnHeader Background="#ECD4C9" Opacity="0.63">
                 </DataGridColumnHeader>-->
 

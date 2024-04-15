@@ -13,7 +13,6 @@ namespace RefreshCourseClient.Models
         public string? SubjectName { get; set; }
         public string? LessonType { get; set; }
         public int HoursCount { get; set; }
-
         public double PayHour { get; set; }
         public double Money { get; set; }
     }

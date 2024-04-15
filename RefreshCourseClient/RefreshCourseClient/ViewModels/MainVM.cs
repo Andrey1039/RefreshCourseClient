@@ -177,9 +177,7 @@ namespace RefreshCourseClient.ViewModels
                 {
                     StringBuilder csvData = new StringBuilder();
 
-                    csvData.Append(string.Join(";", typeof(RecordModel).GetProperties()
-                                        .Select(f => f.Name)
-                                        .ToList()) + "\n");
+                    csvData.Append("№;Группа;Предмет;Тип занятия;Кол-во часов;Оплата за час;Сумма\n");
 
                     foreach (var record in (IList<RecordModel>)records)
                         csvData.Append($"{record.Id};{record.GroupName};{record.SubjectName};{record.LessonType};" +
