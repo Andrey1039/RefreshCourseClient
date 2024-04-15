@@ -13,6 +13,9 @@
     <Page Update="Resources\ButtonsResources.xaml">
       <SubType>Designer</SubType>
     </Page>
+    <Page Update="Resources\DataGridResources.xaml">
+      <SubType>Designer</SubType>
+    </Page>
     <Page Update="Resources\PasswordboxResources.xaml">
       <SubType>Designer</SubType>
     </Page>

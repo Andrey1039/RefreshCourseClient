@@ -18,22 +18,8 @@
                 <ResourceDictionary Source="../Resources/PasswordboxResources.xaml"/>
                 <ResourceDictionary Source="../Resources/TextboxResources.xaml"/>
                 <ResourceDictionary Source="../Resources/ProgressbarResources.xaml"/>
+                <ResourceDictionary Source="../Resources/DataGridResources.xaml"/>
             </ResourceDictionary.MergedDictionaries>
-            <Style x:Key="TextCellStyle" TargetType="DataGridCell">
-                <Setter Property="Template">
-                    <Setter.Value>
-                        <ControlTemplate TargetType="{x:Type DataGridCell}">
-                            <Grid Background="{TemplateBinding Background}" SnapsToDevicePixels="True">
-                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
-                            </Grid>
-                        </ControlTemplate>
-                    </Setter.Value>
-                </Setter>
-            </Style>
-            <Style x:Key="HeaderCellStyle" TargetType="{x:Type DataGridColumnHeader}">
-                <Setter Property="HorizontalContentAlignment" Value="Center"></Setter>
-                <Setter Property="FontWeight" Value="Bold"></Setter>
-            </Style>
         </ResourceDictionary>
 
     </Window.Resources>
@@ -133,8 +119,6 @@
                     <DataGridTextColumn Width="1.7*" Header="Сумма" Binding="{Binding Money}"></DataGridTextColumn>
                 </DataGrid.Columns>
             </DataGrid>
-            <!--<DataGridColumnHeader Background="#ECD4C9" Opacity="0.63">
-                </DataGridColumnHeader>-->
 
             <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center"
                         VerticalAlignment="Center" CanHorizontallyScroll="False" CanVerticallyScroll="False">
