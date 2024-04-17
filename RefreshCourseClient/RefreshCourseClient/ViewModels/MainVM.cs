@@ -148,14 +148,17 @@ namespace RefreshCourseClient.ViewModels
                                 CurrentGridVisibility = false;
 
                                 ProgressText = "Обновление данных...";
-                                UpdateWorkLoad(false);
+                                string result = UpdateWorkLoad(false);
+
+                                if (result == string.Empty)
+                                    CurrentGridVisibility = true;
                             }
                             else
                             {
                                 _privateKey = string.Empty;
                                 _token = string.Empty;
 
-                                _messenger.ShowErrorMessageBox("Ошибка", "Ошибка авторизации");
+                                //_messenger.ShowErrorMessageBox("Ошибка", "Ошибка авторизации");
                             }
                         }
                         else
@@ -221,9 +224,12 @@ namespace RefreshCourseClient.ViewModels
                         ProgressBar = true;
                         ProgressText = "Обновление данных...";
 
-                        UpdateWorkLoad(true);
+                        string result = UpdateWorkLoad(true);
 
                         ProgressBar = false;
+
+                        if (result == string.Empty)
+                            CurrentGridVisibility = true;
                     });
                 });
                 
@@ -250,11 +256,11 @@ namespace RefreshCourseClient.ViewModels
                         {
                             string responseData = SendPostRequest(string.Empty, $"{_serverUrl}/api/Auth/Logout");
                             ProgressBar = false;
+
+                            _token = string.Empty;
+                            _privateKey = string.Empty;
                         });
                         
-                        _token = string.Empty;
-                        _privateKey = string.Empty;
-
                         CurrentGridVisibility = true;
                     }
                 });
@@ -278,7 +284,7 @@ namespace RefreshCourseClient.ViewModels
         }
 
         // Получение текущих данных о нагрузке
-        private void UpdateWorkLoad(bool mode)
+        private string UpdateWorkLoad(bool mode)
         {
             string responseData = SendGetRequest($"{_serverUrl}/api/Home/GetWorkLoad");
 
@@ -299,12 +305,16 @@ namespace RefreshCourseClient.ViewModels
 
                     if (mode)
                         _messenger.ShowInfoMessageBox("Данные", "Данные успешно обновлены");
+
+                    return "Ok";
                 }
                 catch
                 {
-                    _messenger.ShowErrorMessageBox("Ошибка", "Ошибка при получении данных с сервера");
+                    _messenger.ShowErrorMessageBox("Ошибка", responseData);
                 }             
             }
+
+            return string.Empty;
         }
 
         // Отправка Post запроса на сервер
@@ -324,7 +334,15 @@ namespace RefreshCourseClient.ViewModels
                 if (response.StatusCode == HttpStatusCode.OK)
                     responseResult = response.Content.ReadAsStringAsync().Result;
                 else
+                {
+                    if (response.StatusCode == HttpStatusCode.Unauthorized)
+                    {
+                        _messenger.ShowErrorMessageBox("Авторизация",
+                            response.Content.ReadAsStringAsync().Result);
+                    }
+
                     return string.Empty;
+                }                   
             }
             catch
             {
@@ -349,7 +367,16 @@ namespace RefreshCourseClient.ViewModels
                 if (response.StatusCode == HttpStatusCode.OK)
                     responseResult = response.Content.ReadAsStringAsync().Result;
                 else
+                {
+                    if (response.StatusCode == HttpStatusCode.Unauthorized)
+                    {
+                        _messenger.ShowErrorMessageBox("Авторизация",
+                            "Время сессии истекло.\nПожалуйста, выполните повторую авторизацию.");                     
+                    }
+
                     return string.Empty;
+                }
+                    
             }
             catch
             {

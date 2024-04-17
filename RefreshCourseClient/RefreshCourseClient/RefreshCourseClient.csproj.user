@@ -2,14 +2,6 @@
 <Project ToolsVersion="Current" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup />
   <ItemGroup>
-    <Compile Update="Views\AuthPage.xaml.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Update="Views\TablePage.xaml.cs">
-      <SubType>Code</SubType>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
     <Page Update="Resources\ButtonsResources.xaml">
       <SubType>Designer</SubType>
     </Page>
@@ -20,12 +12,6 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Update="Resources\TextboxResources.xaml">
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Update="Views\AuthPage.xaml">
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Update="Views\TablePage.xaml">
       <SubType>Designer</SubType>
     </Page>
   </ItemGroup>
