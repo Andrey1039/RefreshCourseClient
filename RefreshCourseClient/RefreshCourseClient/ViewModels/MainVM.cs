@@ -12,6 +12,7 @@ using System.Runtime.CompilerServices;
 using RefreshCourseClient.Data.Services;
 using RefreshCourseClient.Data.Encryption;
 using System.IdentityModel.Tokens.Jwt;
+using System.Security.Cryptography;
 using System.Windows.Documents;
 using System.IO;
 using System.Diagnostics;
@@ -307,6 +308,14 @@ namespace RefreshCourseClient.ViewModels
                         _messenger.ShowInfoMessageBox("Данные", "Данные успешно обновлены");
 
                     return "Ok";
+                }
+                catch (CryptographicException e)
+                {
+                    _messenger.ShowErrorMessageBox("Ошибка", "Произошла ошибка получения данных о нагрузке.");
+                }
+                catch (JsonReaderException e)
+                {
+                    _messenger.ShowErrorMessageBox("Ошибка", "Произошла ошибка получения данных о нагрузке.");
                 }
                 catch
                 {
