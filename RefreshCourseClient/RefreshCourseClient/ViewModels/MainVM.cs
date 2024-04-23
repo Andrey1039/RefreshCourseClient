@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using System.IO;
+using System.Net;
 using System.Text;
 using System.Windows;
 using Newtonsoft.Json;
@@ -7,16 +8,12 @@ using System.ComponentModel;
 using System.Security.Claims;
 using System.Windows.Controls;
 using RefreshCourseClient.Models;
+using System.Security.Cryptography;
 using System.Collections.ObjectModel;
 using System.Runtime.CompilerServices;
+using System.IdentityModel.Tokens.Jwt;
 using RefreshCourseClient.Data.Services;
 using RefreshCourseClient.Data.Encryption;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Cryptography;
-using System.Windows.Documents;
-using System.IO;
-using System.Diagnostics;
-using System.Windows.Threading;
 
 namespace RefreshCourseClient.ViewModels
 {
@@ -105,69 +102,64 @@ namespace RefreshCourseClient.ViewModels
         {
             get
             {
-                return _loginCommand ??= new RelayCommand(passwordTB =>
+                return _loginCommand ??= new RelayCommand(async passwordTB => await Task.Factory.StartNew(() =>
                 {
                     ProgressBar = true;
                     ProgressText = "Выполняется авторизация...";
 
-                    Task.Factory.StartNew(() =>
-                    {
-                        // Обмен публичными ключами
-                        var password = ((PasswordBox)passwordTB).Password;
-                        (string privateKeyClient, string publicKeyClient) = VKOGost.GetKeyPair();
+                    // Обмен публичными ключами
+                    var password = ((PasswordBox)passwordTB).Password;
+                    (string privateKeyClient, string publicKeyClient) = VKOGost.GetKeyPair();
 
-                        string jsonData = JsonConvert.SerializeObject(new
+                    string jsonData = JsonConvert.SerializeObject(new
+                    {
+                        Email = _userEmail,
+                        PublicKey = publicKeyClient
+                    });
+
+                    string serverPublicKey = SendPostRequest(jsonData, $"{_serverUrl}/api/Auth/SwapKeys");
+
+
+                    // Авторизация и получение токена
+                    if (serverPublicKey != string.Empty)
+                    {
+                        _privateKey = VKOGost.GetHash(privateKeyClient, serverPublicKey);
+
+                        jsonData = JsonConvert.SerializeObject(new
                         {
                             Email = _userEmail,
-                            PublicKey = publicKeyClient
+                            Password = CipherEngine.EncryptString(password.ToString(), _privateKey)
                         });
 
-                        string serverPublicKey = SendPostRequest(jsonData, $"{_serverUrl}/api/Auth/SwapKeys");
+                        _token = SendPostRequest(jsonData, $"{_serverUrl}/api/Auth/Login");
 
-
-                        // Авторизация и получение токена
-                        if (serverPublicKey != string.Empty)
+                        if (_token != string.Empty)
                         {
-                            _privateKey = VKOGost.GetHash(privateKeyClient, serverPublicKey);
+                            var handler = new JwtSecurityTokenHandler();
+                            var jsonToken = handler.ReadToken(_token) as JwtSecurityToken;
 
-                            jsonData = JsonConvert.SerializeObject(new
-                            {
-                                Email = _userEmail,
-                                Password = CipherEngine.EncryptString(password.ToString(), _privateKey)
-                            });
+                            var username = jsonToken.Claims.First(claim => claim.Type == ClaimTypes.Name).Value;
 
-                            _token = SendPostRequest(jsonData, $"{_serverUrl}/api/Auth/Login");
+                            _messenger.ShowInfoMessageBox("Вход", $"Добро пожаловать,\n{username}");
+                            CurrentGridVisibility = false;
 
-                            if (_token != string.Empty)
-                            {
-                                var handler = new JwtSecurityTokenHandler();
-                                var jsonToken = handler.ReadToken(_token) as JwtSecurityToken;
+                            ProgressText = "Обновление данных...";
+                            string result = UpdateWorkLoad(false);
 
-                                var username = jsonToken.Claims.First(claim => claim.Type == ClaimTypes.Name).Value;
-
-                                _messenger.ShowInfoMessageBox("Вход", $"Добро пожаловать,\n{username}");
-                                CurrentGridVisibility = false;
-
-                                ProgressText = "Обновление данных...";
-                                string result = UpdateWorkLoad(false);
-
-                                if (result == string.Empty)
-                                    CurrentGridVisibility = true;
-                            }
-                            else
-                            {
-                                _privateKey = string.Empty;
-                                _token = string.Empty;
-
-                                //_messenger.ShowErrorMessageBox("Ошибка", "Ошибка авторизации");
-                            }
+                            if (result == string.Empty)
+                                CurrentGridVisibility = true;
                         }
                         else
-                            _messenger.ShowErrorMessageBox("Ошибка", "Ошибка авторизации");
+                        {
+                            _privateKey = string.Empty;
+                            _token = string.Empty;
+                        }
+                    }
+                    else
+                        _messenger.ShowErrorMessageBox("Ошибка", "Ошибка авторизации");
 
-                        ProgressBar = false;
-                    });               
-                });
+                    ProgressBar = false;
+                }));
             }
         }
 
@@ -217,23 +209,18 @@ namespace RefreshCourseClient.ViewModels
         {
             get
             {
-                return _updateCommand ??= new RelayCommand(_ =>
+                return _updateCommand ??= new RelayCommand(async _ => await Task.Factory.StartNew(() =>
                 {
+                    ProgressBar = true;
+                    ProgressText = "Обновление данных...";
 
-                    Task.Factory.StartNew(() =>
-                    {
-                        ProgressBar = true;
-                        ProgressText = "Обновление данных...";
+                    string result = UpdateWorkLoad(true);
 
-                        string result = UpdateWorkLoad(true);
+                    ProgressBar = false;
 
-                        ProgressBar = false;
-
-                        if (result == string.Empty)
-                            CurrentGridVisibility = true;
-                    });
-                });
-                
+                    if (result == string.Empty)
+                        CurrentGridVisibility = true;
+                }));
             }
         }
 
@@ -261,7 +248,7 @@ namespace RefreshCourseClient.ViewModels
                             _token = string.Empty;
                             _privateKey = string.Empty;
                         });
-                        
+
                         CurrentGridVisibility = true;
                     }
                 });
@@ -320,7 +307,7 @@ namespace RefreshCourseClient.ViewModels
                 catch
                 {
                     _messenger.ShowErrorMessageBox("Ошибка", responseData);
-                }             
+                }
             }
 
             return string.Empty;
@@ -351,7 +338,7 @@ namespace RefreshCourseClient.ViewModels
                     }
 
                     return string.Empty;
-                }                   
+                }
             }
             catch
             {
@@ -380,12 +367,12 @@ namespace RefreshCourseClient.ViewModels
                     if (response.StatusCode == HttpStatusCode.Unauthorized)
                     {
                         _messenger.ShowErrorMessageBox("Авторизация",
-                            "Время сессии истекло.\nПожалуйста, выполните повторую авторизацию.");                     
+                            "Время сессии истекло.\nПожалуйста, выполните повторую авторизацию.");
                     }
 
                     return string.Empty;
                 }
-                    
+
             }
             catch
             {
